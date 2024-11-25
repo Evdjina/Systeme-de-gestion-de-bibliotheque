@@ -1,0 +1,125 @@
+```python
+# Fonction pour ajouter un nouveau livre à la bibliothèque
+def add_book(library):
+    title = input("Entrez le titre du livre : ")  # Titre du livre
+    author = input("Entrez l'auteur du livre : ") # Auteur
+    isbn = input("Entrez l'ISBN du livre : ")     # ISBN
+    quantity = int(input("Entrez la quantité : ")) # Quantité d'exemplaires
+
+ # Créer un dictionnaire pour le livre avec ses détails
+    book = {
+        "title": title,
+        "author": author,
+        "isbn": isbn,
+        "quantity": quantity
+    }
+    library.append(book)  # Ajouter le livre à la bibliothèque
+    print("Livre ajouté avec succès !")  # Confirmer l'ajout
+
+# Fonction pour emprunter un livre
+def borrow_book(library):
+    title = input("Entrez le titre ou l'ISBN du livre à emprunter : ")
+    for book in library:
+        if book["title"] == title or book["isbn"] == title:
+            if book["quantity"] > 0:
+                book["quantity"] -= 1
+                print("Livre emprunté avec succès !\n")
+                return
+            else:
+                print("Le livre n'est pas disponible en stock.\n")
+                return
+    print("Livre non trouvé dans la bibliothèque.\n")
+
+# Fonction pour retourner un livre emprunté
+def return_book(library):
+    title = input("Entrez le titre ou l'ISBN du livre à retourner : ")
+    for book in library:
+        if book["title"] == title or book["isbn"] == title:
+            book["quantity"] += 1
+            print("Livre retourné avec succès !\n")
+            return
+    print("Ce livre n'a pas été emprunté.\n")
+
+# Fonction pour afficher tous les livres disponibles
+def view_books(library):
+    if not library:
+        print("La bibliothèque est vide.\n")
+    else:
+        print("Livres disponibles dans la bibliothèque :")
+        for book in library:
+            print(f"Titre : {book['title']}, Auteur : {book['author']}, ISBN : {book['isbn']}, Quantité : {book['quantity']}")
+        print()
+
+
+# Fonction pour rechercher un livre par titre ou auteur
+def search_book(library):
+    query = input("Entrez le titre ou l'auteur du livre à rechercher : ")
+    found = False
+    for book in library:
+        if book["title"] == query or book["author"] == query:
+            print(f"Titre : {book['title']}, Auteur : {book['author']}, ISBN : {book['isbn']}, Quantité : {book['quantity']}")
+            found = True
+    if not found:
+        print("Aucun livre trouvé avec ces informations.\n")
+
+# Fonction pour sauvegarder les données de la bibliothèque dans un fichier texte
+def save_to_file(library, filename="library_books.txt"):
+    with open(filename, "w") as file:
+        for book in library:
+            file.write(f"{book['title']},{book['author']},{book['isbn']},{book['quantity']}\n")
+    print("Bibliothèque sauvegardée avec succès.\n")
+
+# Fonction pour charger les données de la bibliothèque à partir d'un fichier texte
+def load_from_file(filename="library_books.txt"):
+    library = []
+    try:
+        with open(filename, "r") as file:
+            for line in file:
+                title, author, isbn, quantity = line.strip().split(",")
+                book = {
+                    "title": title,
+                    "author": author,
+                    "isbn": isbn,
+                    "quantity": int(quantity)
+                }
+                library.append(book)
+        print("Bibliothèque chargée avec succès.\n")
+    except FileNotFoundError:
+        print("Aucun fichier de bibliothèque trouvé. Un nouveau fichier sera créé lors de la sauvegarde.\n")
+    return library
+
+
+# Fonction principale pour afficher le menu et gérer les choix de l'utilisateur
+def main():
+    library = load_from_file()  # Charger les livres existants
+    while True:
+        print("Menu de Gestion de Bibliothèque")
+        print("1. Ajouter un livre")
+        print("2. Emprunter un livre")
+        print("3. Retourner un livre")
+        print("4. Voir les livres disponibles")
+        print("5. Rechercher un livre")
+        print("6. Sauvegarder et quitter")
+        
+        choice = input("Choisissez une option : ")
+        
+        if choice == "1":
+            add_book(library)
+        elif choice == "2":
+            borrow_book(library)
+        elif choice == "3":
+            return_book(library)
+        elif choice == "4":
+            view_books(library)
+        elif choice == "5":
+            search_book(library)
+        elif choice == "6":
+            save_to_file(library)
+            print("Merci d'avoir utilisé la gestion de bibliothèque. Au revoir !")
+            break
+        else:
+            print("Choix invalide. Veuillez réessayer.\n")
+
+# Exécuter le programme
+main()
+
